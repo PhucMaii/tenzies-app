@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tenzies-dev-95320-authRole",
+      "UnauthRoleArn": "arn:aws:iam::564842424614:role/amplify-tenzies-dev-95320-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::564842424614:role/amplify-tenzies-dev-95320-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-tenzies-dev-95320-deployment",
+      "UnauthRoleName": "amplify-tenzies-dev-95320-unauthRole",
+      "StackName": "amplify-tenzies-dev-95320",
+      "StackId": "arn:aws:cloudformation:us-west-2:564842424614:stack/amplify-tenzies-dev-95320/f95b3020-8ae9-11ee-a142-0a91be11c087",
+      "AmplifyAppId": "d17cw0ddvnqjsj"
+    }
+  }
+}
