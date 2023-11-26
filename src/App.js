@@ -3,8 +3,9 @@ import { useState, useEffect } from "react"
 import {nanoid} from "nanoid"
 import Die from "./components/Die"
 import Confetti from "react-confetti"
-import Modal from "react-modal"
-import "./assets/main.css"
+import Modal from "react-modal";
+import "./assets/main.css";
+
 export default function App() {
     // Game modes
     const [mode, setMode] = useState("");
@@ -91,8 +92,6 @@ export default function App() {
 
     }
 
-
-
     function startInterval() {
         const easyTime = 4000; 
         const normalTime = 1500;
@@ -178,8 +177,6 @@ export default function App() {
             clearInterval(intervalId);
             startInterval();
         }
-        
-
     }
     
     function holdDice(id) {
@@ -191,8 +188,6 @@ export default function App() {
         })
         
     }
-
-
     const diceElements = dice.map(dice => <Die 
         key={dice.id} 
         holdDice={() => holdDice(dice.id)} 
@@ -248,8 +243,8 @@ export default function App() {
             setTenzies(true);
         }
     }, [dice]) 
-    
-    
+
+
 
     return (
         <main className="main-container">

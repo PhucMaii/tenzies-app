@@ -10,6 +10,11 @@
       "StackName": "amplify-tenzies-dev-95320",
       "StackId": "arn:aws:cloudformation:us-west-2:564842424614:stack/amplify-tenzies-dev-95320/f95b3020-8ae9-11ee-a142-0a91be11c087",
       "AmplifyAppId": "d17cw0ddvnqjsj"
+    },
+    "categories": {
+      "auth": {
+        "tenzies67818782": {}
+      }
     }
   }
 }
