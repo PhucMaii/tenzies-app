@@ -3,17 +3,16 @@ body {
     margin: 0;
     background-color: #0B2434;
     padding: 20px;
-    font-family: "Karla" ;
+    font-family: "Inter";
     display: grid;
     place-content: center;
 }
 
 main {
     background-color: rgb(253, 251, 238);
-    height: 600px;
+    height: auto;
     max-width: 800px;
     text-align: center;
-
     border-radius: 20px;
     padding: 20px;
 }
@@ -99,9 +98,50 @@ main {
     padding: 10px;
 }
 
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-container label {
+    text-align: left;
+}
+
+.input-container input {
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
+}
+
+.form-container button {
+    padding: 14px 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: #5035FF !important;
+    color: white;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 @media only screen and (max-width: 550px) {
     main{
-        height: 700px;
+        height: auto;
     }
     .die{
         width: 60px;
