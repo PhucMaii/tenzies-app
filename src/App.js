@@ -12,10 +12,13 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import * as AWS from 'aws-sdk';
 import Paper from '@mui/material/Paper';
 import LoginModal from "./components/LoginModal/LoginModal"
 import { Button } from "@mui/material"
+import { DynamoDBClient, GetItemCommand, PutItemCommand, ScanCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb"
+import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { marshall } from "@aws-sdk/util-dynamodb"
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -78,13 +81,14 @@ export default function App() {
         localStorage.setItem("minutesRecord", Infinity);
         localStorage.setItem("secondsRecord", Infinity);
     }  
-    const docClient = new AWS.DynamoDB.DocumentClient();  
-    AWS.config.update({
+    const client = new DynamoDBClient({
         region: 'us-west-2',
-        endpoint: 'dynamodb.us-west-2.amazonaws.com',
-        accessKeyId: 'AKIAYHAZ3NETFFR3HTSF',
-        secretAccessKey: '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'
+        credentials: {
+            accessKeyId: 'AKIAYHAZ3NETFFR3HTSF',
+            secretAccessKey: '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'
+        },
     });
+    const docClient = DynamoDBDocumentClient.from(client);
     let minutesRecord = localStorage.getItem('minutesRecord');
     let secondsRecord = localStorage.getItem('secondsRecord');
     const [record, setRecord] = useState(`${minutesRecord < 10 ? "0" + minutesRecord : minutesRecord }:${secondsRecord < 10 ? "0" + secondsRecord : secondsRecord}`)
@@ -115,43 +119,46 @@ export default function App() {
         },
     };
 
-    const onUpdate = (updatedItem) => {
-        let updateArray = [];
-        let updateAttributes = {};
-    
-        console.log(record);
-        let params = {
-            TableName: "users",
-            Key: {
-                uid: currentUser.uid,
-                username: currentUser.username
-            },
-            UpdateExpression: `set #record = :record`,
-            ExpressionAttributeValues: {":record": record},
-            ExpressionAttributeNames: {"#record":"record"}
-        };
-    
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('Update User successfully', data);
-            }
-        });
+    const onUpdate = async () => {
+        console.log(currentUser.uid.S);
+        const targetUid = "OqZ7uuOOKP8xa8_sdWiZN";
+        try {
+
+            // New way
+            const params = {
+                "ExpressionAttributeNames": {
+                    "#record": "record"
+                },
+                "ExpressionAttributeValues": { 
+                    ":record": {
+                        "S": "0:60"
+                    }
+                },
+                "Key": marshall({
+                    uid: "OqZ7uuOOKP8xa8_sdWiZN"
+                }),
+                "ReturnValues": "ALL_NEW",
+                "TableName": "users",
+                "UpdateExpression": "SET #record = :record"
+            };
+            const command = new UpdateItemCommand(params);
+            const response = await docClient.send(command); 
+            console.log('Update User successfully', response);
+        } catch (err) {
+            console.error('Error updating user err', err);
+        }
     };
     
-    const onRead = () => {
-        let params = {
-            TableName: "users"
-        };
-        docClient.scan(params, function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
+    const onRead = async () => {
+        try {
+            const params = {
+                TableName: "users",
+            };
+            const data = await docClient.send(new ScanCommand(params));
             const users = data.Items;
             users.sort((userA, userB) => {
-                const [minutesA, secondsA] = userA.record.split(':').map(Number);
-                const [minutesB, secondsB] = userB.record.split(':').map(Number);
+                const [minutesA, secondsA] = userA.record.S.split(':').map(Number);
+                const [minutesB, secondsB] = userB.record.S.split(':').map(Number);
                 // Compare minutes first
                 if (minutesA !== minutesB) {
                   return minutesA - minutesB;
@@ -169,8 +176,9 @@ export default function App() {
                 }
                 return newUserList;
             });
+        } catch(error) {
+            console.log(error);
         }
-        });
     };
 
     function chooseMode(e) {
@@ -379,12 +387,12 @@ export default function App() {
                     </TableHead>
                     <TableBody>
                         {userList.length > 0 && userList.map((user, index) => (
-                            <StyledTableRow key={user.username}>
+                            <StyledTableRow key={user.username.S}>
                               <StyledTableCell component="th" scope="row">
                                 {index + 1}
                               </StyledTableCell>
-                              <StyledTableCell align="center">{user.username}</StyledTableCell>
-                              <StyledTableCell align="center">{user.record}</StyledTableCell>
+                              <StyledTableCell align="center">{user.username.S}</StyledTableCell>
+                              <StyledTableCell align="center">{user.record.S}</StyledTableCell>
                             </StyledTableRow>
                         ))}
                     </TableBody>
